@@ -27,7 +27,7 @@ public class Entity {
 	}
 	
 	public void render(Graphics g) {
-		g.drawImage(sprite, this.getX() - Camera.x, this.getY() - Camera.y,null);
+		g.drawImage(sprite, this.getX() - Camera.x, this.getY() - Camera.y,32,32,null);
 	}
 	
 	public void tick(){

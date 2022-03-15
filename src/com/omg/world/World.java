@@ -10,8 +10,9 @@ import com.omg.main.Game;
 
 public class World {
 	
-	private Tile[] tiles;
+	private static Tile[] tiles;
 	public static int width, height;
+	public static final int tile_size = 32;
 
 	public World(String path) {
 		
@@ -27,27 +28,27 @@ public class World {
 				for(int j = 0; j < mapa.getHeight();j++) {
 					
 						int pxAtual = px[i + (j*mapa.getWidth())];
-						tiles[i + (j *width)] = new Floor(i*16,j*16,Tile.tile_floor);
+						tiles[i + (j *width)] = new Floor(i*tile_size,j*tile_size,Tile.tile_floor);
 						
 						if(pxAtual == 0xFF000000) {
-							tiles[i + (j *width)] = new Floor(i*16,j*16,Tile.tile_floor);
+							tiles[i + (j *width)] = new Floor(i*tile_size,j*tile_size,Tile.tile_floor);
 						}else if(pxAtual == 0xFFFFFFFF) {
-							tiles[i + (j *width)] = new Floor(i*16,j*16,Tile.tile_wall);
+							tiles[i + (j *width)] = new Wall(i*tile_size,j*tile_size,Tile.tile_wall);
 						}else if(pxAtual == 0xFF0026FF) {
-							Game.player.setX(i*16);
-							Game.player.setY(j*16);
+							Game.player.setX(i*tile_size);
+							Game.player.setY(j*tile_size);
 						}else if(pxAtual == 0xFFFF0800){
 							//Enemy
-							Game.entities.add(new Enemy(i*16,j*16,16,16,Entity.enemy));
+							Game.entities.add(new Enemy(i*tile_size,j*tile_size,tile_size,tile_size,Entity.enemy));
 						}else if(pxAtual == 0xFF808080) {
 							//arma
-							Game.entities.add(new Gun(i*16,j*16,16,16,Entity.gun));
+							Game.entities.add(new Gun(i*tile_size,j*tile_size,tile_size,tile_size,Entity.gun));
 						}else  if(pxAtual == 0xFF00FF1D) {
 							//heal
-							Game.entities.add(new Heal(i*16,j*16,16,16,Entity.heal));
+							Game.entities.add(new Heal(i*tile_size,j*tile_size,tile_size,tile_size,Entity.heal));
 						}else if(pxAtual == 0xFFFFDD00) {
 							//bullet
-							Game.entities.add(new Bullet(i*16,j*16,16,16,Entity.bullet));
+							Game.entities.add(new Bullet(i*tile_size,j*tile_size,tile_size,tile_size,Entity.bullet));
 						}
 					}
 				}
@@ -56,14 +57,33 @@ public class World {
 		}
 	}
 	
-	public void render(Graphics g) {
-		int xstart = Camera.x >> 4;
-		int ystart = Camera.y >> 4;
-		int xfinal = xstart  + (Game.WIDTH >> 4);
-		int yfinal = ystart + (Game.HEIGHT >> 4);
+	public static boolean isFree(int xnext, int ynext) {
+		int x1 = xnext / tile_size;
+		int y1 = ynext/ tile_size;
 		
-		for(int i = xstart; i <= xfinal +  1; i++) {
-			for(int j = ystart; j <= yfinal + 1;  j++) {
+		int x2 = (xnext+tile_size-1) / tile_size;
+		int y2 = ynext/ tile_size;
+		
+		int x3 = xnext / tile_size;
+		int y3 = (ynext+tile_size-1)/ tile_size;
+		
+		int x4 = (xnext+tile_size-1) / tile_size;
+		int y4 = (ynext+tile_size-1)/ tile_size;
+		
+		return !(tiles[x1+(y1*World.width)] instanceof Wall ||
+				tiles[x2+(y2*World.width)] instanceof Wall ||
+				tiles[x3+(y3*World.width)] instanceof Wall ||
+				tiles[x4+(y4*World.width)] instanceof Wall );
+	}
+	
+	public void render(Graphics g) {
+		int xstart = Camera.x >> 6;
+		int ystart = Camera.y >> 6;
+		int xfinal = xstart  + (Game.WIDTH >> 4) - 3;
+		int yfinal = ystart + (Game.HEIGHT >> 4) - 3;
+		
+		for(int i = xstart; i <= xfinal; i++) {
+			for(int j = ystart; j <= yfinal;  j++) {
 				if(i < 0 || j < 0 || i >= width|| j >= height) {
 					continue;
 				}
