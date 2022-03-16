@@ -39,7 +39,9 @@ public class World {
 							Game.player.setY(j*tile_size);
 						}else if(pxAtual == 0xFFFF0800){
 							//Enemy
-							Game.entities.add(new Enemy(i*tile_size,j*tile_size,tile_size,tile_size,Entity.enemy));
+							Enemy en = new Enemy(i*tile_size,j*tile_size,tile_size,tile_size,Entity.enemy);
+							Game.entities.add(en);
+							Game.enemies.add(en);
 						}else if(pxAtual == 0xFF808080) {
 							//arma
 							Game.entities.add(new Gun(i*tile_size,j*tile_size,tile_size,tile_size,Entity.gun));
