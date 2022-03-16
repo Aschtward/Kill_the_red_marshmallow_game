@@ -3,7 +3,6 @@ package com.omg.entities;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
-
 import com.omg.main.Game;
 import com.omg.world.Camera;
 import com.omg.world.World;
@@ -40,6 +39,11 @@ public class Enemy extends Entity {
 			this.direction = 0;
 		} 
 	}
+	public boolean isCollidingPlayer() {
+		Rectangle enemy = new Rectangle(this.getX(),this.getY(),World.tile_size - 6,World.tile_size - 6);
+		Rectangle player = new Rectangle(Game.player.getX(), Game.player.getY(),32,32);
+		return enemy.intersects(player);
+	}
 	
 	public boolean isColliding(int xnext,int ynext) {
 		Rectangle enemy = new Rectangle(xnext,ynext,World.tile_size - 6,World.tile_size - 6);
@@ -55,8 +59,17 @@ public class Enemy extends Entity {
 	}
 	
 	public void tick() {
-		if(Game.rand.nextInt(100) < 70)
-			dumbChase();
+		if(!isCollidingPlayer()) {
+			if(Game.rand.nextInt(100) < 70)
+				dumbChase();
+		}else {
+			if(Game.rand.nextInt(100) < 10) {
+				Game.player.life -= Game.rand.nextInt(5);
+					if(Game.player.life <= 0) {
+						System.exit(1);
+					}
+			}
+		}
 	}
 	
 	public void render(Graphics g) {

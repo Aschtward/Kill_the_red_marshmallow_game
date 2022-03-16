@@ -18,6 +18,7 @@ import com.omg.entities.Enemy;
 import com.omg.entities.Entity;
 import com.omg.entities.Player;
 import com.omg.graph.Spritesheet;
+import com.omg.graph.UI;
 import com.omg.world.World;
 
 public class Game extends Canvas implements Runnable, KeyListener{
@@ -38,6 +39,7 @@ public class Game extends Canvas implements Runnable, KeyListener{
 	public static Spritesheet spritesheet;
 	public static Player player;
 	public static Random rand;
+	public UI ui;
 	
 	public static World world;
 	private Thread thread;
@@ -61,6 +63,7 @@ public class Game extends Canvas implements Runnable, KeyListener{
 		entities.add(player);
 		world = new World("/map.png");
 		rand = new Random();
+		ui = new UI();
 		
 	}
 	
@@ -122,7 +125,7 @@ public class Game extends Canvas implements Runnable, KeyListener{
 			Entity e = entities.get(i);
 			e.render(g);
 		}
-
+		ui.render(g);
 		
 		bs.show();
 	}
