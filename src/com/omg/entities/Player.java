@@ -13,7 +13,8 @@ public class Player extends Entity{
 	public int speed = 2;
 	
 	private BufferedImage[] rightPlayer, leftPlayer;
-	private int frames;
+	public double life = 100;
+	public double maxlife = 100;
 	
 	public Player(int x, int y, int width, int height, BufferedImage sprite) {
 		super(x, y, width, height, sprite);

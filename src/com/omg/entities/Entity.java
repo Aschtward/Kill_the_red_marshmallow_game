@@ -1,6 +1,7 @@
 package com.omg.entities;
 
 import java.awt.Graphics;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
 import com.omg.main.Game;
@@ -12,7 +13,7 @@ public class Entity {
 	private int y;
 	private int width;
 	private int height;
-	private BufferedImage sprite;
+	private BufferedImage sprite;	
 	public static BufferedImage heal = Game.spritesheet.getSprite(5*16,0,16,16);
 	public static BufferedImage gun = Game.spritesheet.getSprite(6*16,0,16,16);
 	public static BufferedImage bullet = Game.spritesheet.getSprite(7*16,0,16,16);
@@ -29,7 +30,9 @@ public class Entity {
 	public void render(Graphics g) {
 		g.drawImage(sprite, this.getX() - Camera.x, this.getY() - Camera.y,32,32,null);
 	}
-	
+	/*public boolean isColligind(Entity a, Entity b) {
+		Rectangle player = new Rectangle(player.getX())
+	}*/
 	public void tick(){
 		
 	}

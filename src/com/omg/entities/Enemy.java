@@ -12,6 +12,7 @@ public class Enemy extends Entity {
 	private int speed = 1;
 	private BufferedImage[] ani;
 	private int direction = 0;
+	private int view_size = 200;
 	
 	public Enemy(int x, int y, int width, int height, BufferedImage sprite) {
 		super(x, y, width, height, null);
@@ -58,10 +59,18 @@ public class Enemy extends Entity {
 		return false;
 	}
 	
+	public boolean isSeeing() {
+		Rectangle enemyView = new Rectangle(this.getX()-(int)(view_size/2),this.getY()-(int)(view_size/2),view_size,view_size);
+		Rectangle player = new Rectangle(Game.player.getX(), Game.player.getY(),32,32);
+		return enemyView.intersects(player);
+	}
+	
 	public void tick() {
 		if(!isCollidingPlayer()) {
-			if(Game.rand.nextInt(100) < 70)
-				dumbChase();
+			if(isSeeing()) {
+				if(Game.rand.nextInt(100) < 70)
+					dumbChase();
+			}
 		}else {
 			if(Game.rand.nextInt(100) < 10) {
 				Game.player.life -= Game.rand.nextInt(5);
