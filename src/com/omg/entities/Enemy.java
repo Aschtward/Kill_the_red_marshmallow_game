@@ -1,31 +1,43 @@
 package com.omg.entities;
 
+import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
 import com.omg.main.Game;
+import com.omg.world.Camera;
 import com.omg.world.World;
 
 public class Enemy extends Entity {
 
 	private int speed = 1;
+	private BufferedImage[] ani;
+	private int direction = 0;
 	
 	public Enemy(int x, int y, int width, int height, BufferedImage sprite) {
-		super(x, y, width, height, sprite);
-		// TODO Auto-generated constructor stub
+		super(x, y, width, height, null);
+		ani = new BufferedImage[4];
+		ani[0] = Game.spritesheet.getSprite((16*9), 0, 16, 16);//up
+		ani[1] = Game.spritesheet.getSprite((16*8), 0, 16, 16);//down
+		ani[2] = Game.spritesheet.getSprite(16, 16, 16, 16);//right
+		ani[3] = Game.spritesheet.getSprite((16*2), 16, 16, 16);//left
 	}
 	
 	public void dumbChase() {
 		if(Game.player.getX() > this.getX() && World.isFree(this.getX()+speed, this.getY()) && !isColliding(this.getX()+speed, this.getY())) {
 			this.setX(this.getX()+speed);
+			this.direction = 2;
 		}else if(this.getX() > Game.player.getX() && World.isFree(this.getX()-speed, this.getY()) && !isColliding(this.getX()-speed, this.getY())) {
 			this.setX(this.getX()-speed);
+			this.direction = 3;
 		}
 		
 		if(Game.player.getY() > this.getY() && World.isFree(this.getX(), this.getY()+speed) && !isColliding(this.getX(), this.getY()+speed)) {
 			this.setY(this.getY()+speed);
+			this.direction = 1;
 		}else if(Game.player.getY() < this.getY() && World.isFree(this.getX(), this.getY()-speed) && !isColliding(this.getX(), this.getY()-speed)) {
 			this.setY(this.getY()-speed);
+			this.direction = 0;
 		} 
 	}
 	
@@ -45,6 +57,10 @@ public class Enemy extends Entity {
 	public void tick() {
 		if(Game.rand.nextInt(100) < 70)
 			dumbChase();
+	}
+	
+	public void render(Graphics g) {
+		g.drawImage(ani[direction], this.getX() - Camera.x, this.getY() - Camera.y,32,32,null);
 	}
 
 }
