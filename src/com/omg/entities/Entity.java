@@ -30,9 +30,12 @@ public class Entity {
 	public void render(Graphics g) {
 		g.drawImage(sprite, this.getX() - Camera.x, this.getY() - Camera.y,32,32,null);
 	}
-	/*public boolean isColligind(Entity a, Entity b) {
-		Rectangle player = new Rectangle(player.getX())
-	}*/
+	
+	public boolean collided() {
+		Rectangle player = new Rectangle(Game.player.getX(),Game.player.getY(),32,32);
+		Rectangle ent = new Rectangle(this.getX(),this.getY()+8,10,10);
+		return player.intersects(ent);
+	}
 	public void tick(){
 		
 	}

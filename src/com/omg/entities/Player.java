@@ -15,6 +15,7 @@ public class Player extends Entity{
 	private BufferedImage[] rightPlayer, leftPlayer;
 	public double life = 100;
 	public double maxlife = 100;
+	public int ammo = 0;
 	
 	public Player(int x, int y, int width, int height, BufferedImage sprite) {
 		super(x, y, width, height, sprite);
@@ -27,7 +28,23 @@ public class Player extends Entity{
 		leftPlayer[1] = Game.spritesheet.getSprite(0, 16, 16, 16);
 	}
 	
-	
+	public void gotLife() {
+		for(int i = 0; i < Game.entities.size(); i++) {
+			if(Game.entities.get(i) instanceof Heal) {
+				if(Game.entities.get(i).collided()) {
+					Game.entities.remove(i);
+					this.life +=10;
+					if(this.life > 100)
+						this.life =100;
+				}
+			}if(Game.entities.get(i) instanceof Bullet) {
+				if(Game.entities.get(i).collided()) {
+					ammo += 5;
+					Game.entities.remove(i);
+				}
+			}
+		}
+	}
 	
 	public void tick() {
 		if(right && World.isFree(getX()+speed, getY())) {
@@ -42,6 +59,7 @@ public class Player extends Entity{
 		if(down && World.isFree(getX(), getY()+speed)) {
 			setY(getY() + speed);
 		}
+		this.gotLife();
 		Camera.x = Camera.clamp(this.getX() - (Game.WIDTH/2),0,World.width*32 - Game.WIDTH);
 		Camera.y = Camera.clamp(this.getY() - (Game.WIDTH/2),0,World.height*32 - Game.HEIGHT);
 	}

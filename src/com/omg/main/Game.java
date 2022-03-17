@@ -3,6 +3,7 @@ package com.omg.main;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -126,7 +127,8 @@ public class Game extends Canvas implements Runnable, KeyListener{
 			e.render(g);
 		}
 		ui.render(g);
-		
+		g.setFont(new Font("arial",Font.BOLD,17));
+		g.drawString("Munição: " + player.ammo,10,20);
 		bs.show();
 	}
 	
