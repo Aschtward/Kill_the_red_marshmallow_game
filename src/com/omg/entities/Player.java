@@ -15,6 +15,7 @@ public class Player extends Entity{
 	private BufferedImage[] rightPlayer, leftPlayer;
 	private static BufferedImage playerDamage = Game.spritesheet.getSprite(3*16, 16, 16, 16);
 	public boolean gotDamage = false;
+	private boolean hasGun = false;
 	private int damf = 0;
 	public double life = 100;
 	public double maxlife = 100;
@@ -44,6 +45,11 @@ public class Player extends Entity{
 			}if(Game.entities.get(i) instanceof Bullet) {
 				if(Game.entities.get(i).collided()) {
 					ammo += 5;
+					Game.entities.remove(i);
+				}
+			}else if(Game.entities.get(i) instanceof Gun) {
+				if(Game.entities.get(i).collided()) {
+					this.hasGun = true;
 					Game.entities.remove(i);
 				}
 			}
@@ -84,8 +90,14 @@ public class Player extends Entity{
 				g.drawImage(rightPlayer[0],this.getX() - Camera.x,this.getY()- Camera.y,World.tile_size,World.tile_size,null);
 			}else if(left) {
 				g.drawImage(leftPlayer[1],this.getX()- Camera.x,this.getY()- Camera.y,World.tile_size,World.tile_size,null);
+				if(this.hasGun) {
+					g.drawImage(Entity.gun_left, this.getX() - Camera.x, this.getY() - Camera.y, World.tile_size, World.tile_size,null);
+				}
 			}else if(right){
 				g.drawImage(leftPlayer[0],this.getX()- Camera.x,this.getY()- Camera.y,World.tile_size,World.tile_size,null);
+				if(this.hasGun) {
+					g.drawImage(Entity.gun_right, this.getX() - Camera.x, this.getY() - Camera.y, World.tile_size, World.tile_size,null);
+				}
 			}else if(up) {
 				g.drawImage(rightPlayer[1],this.getX()- Camera.x,this.getY()- Camera.y,World.tile_size,World.tile_size,null);
 			}else {

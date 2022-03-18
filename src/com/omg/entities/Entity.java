@@ -16,7 +16,8 @@ public class Entity {
 	private int height;
 	private BufferedImage sprite;	
 	public static BufferedImage heal = Game.spritesheet.getSprite(5*16,0,16,16);
-	public static BufferedImage gun = Game.spritesheet.getSprite(6*16,0,16,16);
+	public static BufferedImage gun_right = Game.spritesheet.getSprite(6*16,0,16,16);
+	public static BufferedImage gun_left = Game.spritesheet.getSprite(4*16,16,16,16);
 	public static BufferedImage bullet = Game.spritesheet.getSprite(7*16,0,16,16);
 	public static BufferedImage enemy = Game.spritesheet.getSprite(8*16, 0, 16, 16);
 
