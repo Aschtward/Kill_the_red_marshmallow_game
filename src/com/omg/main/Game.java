@@ -34,13 +34,13 @@ public class Game extends Canvas implements Runnable, KeyListener{
 	public static int SCALE = 1;
 	///Fim parametros para janela
 	
-	private BufferedImage image;
+	public static BufferedImage image;
 	public static List<Entity> entities;
 	public static List<Enemy> enemies;
 	public static Spritesheet spritesheet;
 	public static Player player;
 	public static Random rand;
-	public UI ui;
+	public static UI ui;
 	
 	public static World world;
 	private Thread thread;

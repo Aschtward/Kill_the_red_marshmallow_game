@@ -13,6 +13,9 @@ public class Player extends Entity{
 	public int speed = 2;
 	
 	private BufferedImage[] rightPlayer, leftPlayer;
+	private static BufferedImage playerDamage = Game.spritesheet.getSprite(3*16, 16, 16, 16);
+	public boolean gotDamage = false;
+	private int damf = 0;
 	public double life = 100;
 	public double maxlife = 100;
 	public int ammo = 0;
@@ -27,6 +30,7 @@ public class Player extends Entity{
 		leftPlayer[0] = Game.spritesheet.getSprite(64, 0, 16, 16);
 		leftPlayer[1] = Game.spritesheet.getSprite(0, 16, 16, 16);
 	}
+	
 	
 	public void gotLife() {
 		for(int i = 0; i < Game.entities.size(); i++) {
@@ -59,23 +63,36 @@ public class Player extends Entity{
 		if(down && World.isFree(getX(), getY()+speed)) {
 			setY(getY() + speed);
 		}
+		
 		this.gotLife();
+		
+		if(this.gotDamage) {
+			damf++;
+			if(this.damf == 8) {
+				this.damf = 0;
+				this.gotDamage = false;
+			}
+		}
 		Camera.x = Camera.clamp(this.getX() - (Game.WIDTH/2),0,World.width*World.tile_size - Game.WIDTH);
 		Camera.y = Camera.clamp(this.getY() - (Game.WIDTH/2),0,World.height*World.tile_size - Game.HEIGHT);
 	}
 	
 	public void render(Graphics g) {
 		
-		if(down) {
-			g.drawImage(rightPlayer[0],this.getX() - Camera.x,this.getY()- Camera.y,World.tile_size,World.tile_size,null);
-		}else if(left) {
-			g.drawImage(leftPlayer[1],this.getX()- Camera.x,this.getY()- Camera.y,World.tile_size,World.tile_size,null);
-		}else if(right){
-			g.drawImage(leftPlayer[0],this.getX()- Camera.x,this.getY()- Camera.y,World.tile_size,World.tile_size,null);
-		}else if(up) {
-			g.drawImage(rightPlayer[1],this.getX()- Camera.x,this.getY()- Camera.y,World.tile_size,World.tile_size,null);
+		if(!this.gotDamage) {
+			if(down) {
+				g.drawImage(rightPlayer[0],this.getX() - Camera.x,this.getY()- Camera.y,World.tile_size,World.tile_size,null);
+			}else if(left) {
+				g.drawImage(leftPlayer[1],this.getX()- Camera.x,this.getY()- Camera.y,World.tile_size,World.tile_size,null);
+			}else if(right){
+				g.drawImage(leftPlayer[0],this.getX()- Camera.x,this.getY()- Camera.y,World.tile_size,World.tile_size,null);
+			}else if(up) {
+				g.drawImage(rightPlayer[1],this.getX()- Camera.x,this.getY()- Camera.y,World.tile_size,World.tile_size,null);
+			}else {
+				g.drawImage(rightPlayer[0],this.getX()- Camera.x,this.getY()- Camera.y,World.tile_size,World.tile_size,null);
+			}
 		}else {
-			g.drawImage(rightPlayer[0],this.getX()- Camera.x,this.getY()- Camera.y,World.tile_size,World.tile_size,null);
+			g.drawImage(playerDamage,this.getX() - Camera.x,this.getY() - Camera.y,World.tile_size,World.tile_size,null);
 		}
 	}
 

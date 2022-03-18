@@ -19,6 +19,7 @@ public class Entity {
 	public static BufferedImage gun = Game.spritesheet.getSprite(6*16,0,16,16);
 	public static BufferedImage bullet = Game.spritesheet.getSprite(7*16,0,16,16);
 	public static BufferedImage enemy = Game.spritesheet.getSprite(8*16, 0, 16, 16);
+
 	
 	public Entity(int x, int y, int width, int height, BufferedImage sprite) {
 		this.x = x;

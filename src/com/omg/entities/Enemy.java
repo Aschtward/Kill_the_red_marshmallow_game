@@ -3,6 +3,11 @@ package com.omg.entities;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.Random;
+
+import com.omg.graph.Spritesheet;
+import com.omg.graph.UI;
 import com.omg.main.Game;
 import com.omg.world.Camera;
 import com.omg.world.World;
@@ -74,8 +79,16 @@ public class Enemy extends Entity {
 		}else {
 			if(Game.rand.nextInt(100) < 10) {
 				Game.player.life -= Game.rand.nextInt(5);
+				Game.player.gotDamage = true;
 					if(Game.player.life <= 0) {
-						System.exit(1);
+						Game.image = new BufferedImage(Game.WIDTH,Game.HEIGHT,BufferedImage.TYPE_INT_RGB);
+						Game.entities = new ArrayList<Entity>();
+						Game.enemies = new ArrayList<Enemy>();
+						Game.spritesheet = new Spritesheet("/text.png");
+						Game.player = new Player(0,0,0,0, Game.spritesheet.getSprite(32, 0, 16, 16));
+						Game.entities.add(Game.player);
+						Game.world = new World("/map.png");
+						Game.ui = new UI();
 					}
 			}
 		}
