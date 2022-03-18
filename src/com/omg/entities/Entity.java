@@ -6,6 +6,7 @@ import java.awt.image.BufferedImage;
 
 import com.omg.main.Game;
 import com.omg.world.Camera;
+import com.omg.world.World;
 
 public class Entity {
 	
@@ -28,11 +29,11 @@ public class Entity {
 	}
 	
 	public void render(Graphics g) {
-		g.drawImage(sprite, this.getX() - Camera.x, this.getY() - Camera.y,32,32,null);
+		g.drawImage(sprite, this.getX() - Camera.x, this.getY() - Camera.y,World.tile_size,World.tile_size,null);
 	}
 	
 	public boolean collided() {
-		Rectangle player = new Rectangle(Game.player.getX(),Game.player.getY(),32,32);
+		Rectangle player = new Rectangle(Game.player.getX(),Game.player.getY(),World.tile_size,World.tile_size);
 		Rectangle ent = new Rectangle(this.getX(),this.getY()+8,10,10);
 		return player.intersects(ent);
 	}

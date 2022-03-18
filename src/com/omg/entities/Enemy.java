@@ -42,7 +42,7 @@ public class Enemy extends Entity {
 	}
 	public boolean isCollidingPlayer() {
 		Rectangle enemy = new Rectangle(this.getX(),this.getY(),World.tile_size - 6,World.tile_size - 6);
-		Rectangle player = new Rectangle(Game.player.getX(), Game.player.getY(),32,32);
+		Rectangle player = new Rectangle(Game.player.getX(), Game.player.getY(),World.tile_size,World.tile_size);
 		return enemy.intersects(player);
 	}
 	
@@ -61,7 +61,7 @@ public class Enemy extends Entity {
 	
 	public boolean isSeeing() {
 		Rectangle enemyView = new Rectangle(this.getX()-(int)(view_size/2),this.getY()-(int)(view_size/2),view_size,view_size);
-		Rectangle player = new Rectangle(Game.player.getX(), Game.player.getY(),32,32);
+		Rectangle player = new Rectangle(Game.player.getX(), Game.player.getY(),World.tile_size,World.tile_size);
 		return enemyView.intersects(player);
 	}
 	
@@ -82,7 +82,7 @@ public class Enemy extends Entity {
 	}
 	
 	public void render(Graphics g) {
-		g.drawImage(ani[direction], this.getX() - Camera.x, this.getY() - Camera.y,32,32,null);
+		g.drawImage(ani[direction], this.getX() - Camera.x, this.getY() - Camera.y,World.tile_size,World.tile_size,null);
 	}
 
 }

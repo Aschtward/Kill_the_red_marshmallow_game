@@ -79,13 +79,12 @@ public class World {
 	}
 	
 	public void render(Graphics g) {
-		int xstart = Camera.x >> 6;
-		int ystart = Camera.y >> 6;
-		int xfinal = xstart  + (Game.WIDTH >> 4) - 3;
-		int yfinal = ystart + (Game.HEIGHT >> 4) - 3;
-		
-		for(int i = xstart; i <= xfinal; i++) {
-			for(int j = ystart; j <= yfinal;  j++) {
+		int xstart = Camera.x / tile_size;
+		int ystart = Camera.y / tile_size;
+		int xfinal = xstart  + (Game.WIDTH / tile_size);
+		int yfinal = ystart + (Game.HEIGHT/ tile_size);
+		for(int i = xstart; i <= xfinal + 1; i++) {
+			for(int j = ystart; j <= yfinal + 1;  j++) {
 				if(i < 0 || j < 0 || i >= width|| j >= height) {
 					continue;
 				}

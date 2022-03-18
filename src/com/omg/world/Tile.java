@@ -19,6 +19,6 @@ public class Tile {
 	}
 	
 	public void render(Graphics g) {
-		g.drawImage(sprite,x - Camera.x ,y - Camera.y,32,32,null);
+		g.drawImage(sprite,x - Camera.x ,y - Camera.y,World.tile_size,World.tile_size,null);
 	}
 }

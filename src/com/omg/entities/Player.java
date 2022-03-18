@@ -60,22 +60,22 @@ public class Player extends Entity{
 			setY(getY() + speed);
 		}
 		this.gotLife();
-		Camera.x = Camera.clamp(this.getX() - (Game.WIDTH/2),0,World.width*32 - Game.WIDTH);
-		Camera.y = Camera.clamp(this.getY() - (Game.WIDTH/2),0,World.height*32 - Game.HEIGHT);
+		Camera.x = Camera.clamp(this.getX() - (Game.WIDTH/2),0,World.width*World.tile_size - Game.WIDTH);
+		Camera.y = Camera.clamp(this.getY() - (Game.WIDTH/2),0,World.height*World.tile_size - Game.HEIGHT);
 	}
 	
 	public void render(Graphics g) {
 		
 		if(down) {
-			g.drawImage(rightPlayer[0],this.getX() - Camera.x,this.getY()- Camera.y,32,32,null);
+			g.drawImage(rightPlayer[0],this.getX() - Camera.x,this.getY()- Camera.y,World.tile_size,World.tile_size,null);
 		}else if(left) {
-			g.drawImage(leftPlayer[1],this.getX()- Camera.x,this.getY()- Camera.y,32,32,null);
+			g.drawImage(leftPlayer[1],this.getX()- Camera.x,this.getY()- Camera.y,World.tile_size,World.tile_size,null);
 		}else if(right){
-			g.drawImage(leftPlayer[0],this.getX()- Camera.x,this.getY()- Camera.y,32,32,null);
+			g.drawImage(leftPlayer[0],this.getX()- Camera.x,this.getY()- Camera.y,World.tile_size,World.tile_size,null);
 		}else if(up) {
-			g.drawImage(rightPlayer[1],this.getX()- Camera.x,this.getY()- Camera.y,32,32,null);
+			g.drawImage(rightPlayer[1],this.getX()- Camera.x,this.getY()- Camera.y,World.tile_size,World.tile_size,null);
 		}else {
-			g.drawImage(rightPlayer[0],this.getX()- Camera.x,this.getY()- Camera.y,32,32,null);
+			g.drawImage(rightPlayer[0],this.getX()- Camera.x,this.getY()- Camera.y,World.tile_size,World.tile_size,null);
 		}
 	}
 

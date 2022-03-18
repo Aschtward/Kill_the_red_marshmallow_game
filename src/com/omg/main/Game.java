@@ -29,8 +29,8 @@ public class Game extends Canvas implements Runnable, KeyListener{
 	
 	///Definindo parametros para janela
 	public static JFrame frame;
-	public static int WIDTH = 400;
-	public static int HEIGHT = 400;
+	public static int WIDTH = 300;
+	public static int HEIGHT = 300;
 	public static int SCALE = 1;
 	///Fim parametros para janela
 	
