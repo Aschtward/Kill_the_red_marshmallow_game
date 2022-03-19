@@ -3,9 +3,13 @@ package com.omg.world;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
+
 import javax.imageio.ImageIO;
-import com.omg.entities.Enemy;
+
 import com.omg.entities.*;
+import com.omg.graph.Spritesheet;
+import com.omg.graph.UI;
 import com.omg.main.Game;
 
 public class World {
@@ -44,7 +48,7 @@ public class World {
 							Game.enemies.add(en);
 						}else if(pxAtual == 0xFF808080) {
 							//arma
-							Game.entities.add(new Gun(i*tile_size,j*tile_size,tile_size,tile_size,Entity.gun));
+							Game.entities.add(new Gun(i*tile_size,j*tile_size,tile_size,tile_size,Entity.gun_right));
 						}else  if(pxAtual == 0xFF00FF1D) {
 							//heal
 							Game.entities.add(new Heal(i*tile_size,j*tile_size,tile_size,tile_size,Entity.heal));
@@ -58,7 +62,18 @@ public class World {
 			e.printStackTrace();
 		}
 	}
-	
+	public static void worldRestart(String path) {
+		Game.entities.clear();
+		Game.enemies.clear();
+		Game.image = new BufferedImage(Game.WIDTH,Game.HEIGHT,BufferedImage.TYPE_INT_RGB);
+		Game.entities = new ArrayList<Entity>();
+		Game.enemies = new ArrayList<Enemy>();
+		Game.spritesheet = new Spritesheet("/text.png");
+		Game.player = new Player(0,0,0,0, Game.spritesheet.getSprite(32, 0, 16, 16));
+		Game.entities.add(Game.player);
+		Game.world = new World(path);
+		Game.ui = new UI();
+	}
 	public static boolean isFree(int xnext, int ynext) {
 		int x1 = xnext / tile_size;
 		int y1 = ynext/ tile_size;

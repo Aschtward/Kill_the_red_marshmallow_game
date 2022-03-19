@@ -16,10 +16,12 @@ public class Player extends Entity{
 	private static BufferedImage playerDamage = Game.spritesheet.getSprite(3*16, 16, 16, 16);
 	public boolean gotDamage = false;
 	private boolean hasGun = false;
+	public boolean shooting = false, mouseShoot = false;
 	private int damf = 0;
+	public int mx,my;
 	public double life = 100;
 	public double maxlife = 100;
-	public int ammo = 0;
+	public int ammo = 10;
 	
 	public Player(int x, int y, int width, int height, BufferedImage sprite) {
 		super(x, y, width, height, sprite);
@@ -32,8 +34,29 @@ public class Player extends Entity{
 		leftPlayer[1] = Game.spritesheet.getSprite(0, 16, 16, 16);
 	}
 	
+	public void gotBullet() {
+		for(int i = 0; i < Game.entities.size(); i++) {
+			if(Game.entities.get(i) instanceof Bullet) {
+				if(Game.entities.get(i).collided()) {
+					ammo += 15;
+					Game.entities.remove(i);
+				}
+			}
+		}
+	}
 	
-	public void gotLife() {
+	public void gotGun() {
+		for(int i = 0; i < Game.entities.size(); i++) {
+			if(Game.entities.get(i) instanceof Gun) {
+				if(Game.entities.get(i).collided()) {
+					this.hasGun = true;
+					Game.entities.remove(i);
+				}
+			}
+		}
+	}
+	
+	public void gotHeal() {
 		for(int i = 0; i < Game.entities.size(); i++) {
 			if(Game.entities.get(i) instanceof Heal) {
 				if(Game.entities.get(i).collided()) {
@@ -41,16 +64,6 @@ public class Player extends Entity{
 					this.life +=10;
 					if(this.life > 100)
 						this.life =100;
-				}
-			}if(Game.entities.get(i) instanceof Bullet) {
-				if(Game.entities.get(i).collided()) {
-					ammo += 5;
-					Game.entities.remove(i);
-				}
-			}else if(Game.entities.get(i) instanceof Gun) {
-				if(Game.entities.get(i).collided()) {
-					this.hasGun = true;
-					Game.entities.remove(i);
 				}
 			}
 		}
@@ -70,7 +83,9 @@ public class Player extends Entity{
 			setY(getY() + speed);
 		}
 		
-		this.gotLife();
+		this.gotHeal();
+		this.gotGun();
+		this.gotBullet();
 		
 		if(this.gotDamage) {
 			damf++;
@@ -79,6 +94,83 @@ public class Player extends Entity{
 				this.gotDamage = false;
 			}
 		}
+		if(shooting) {
+			shooting = false;
+			if(hasGun && ammo > 0) {
+				ammo--;
+				int dx = 0;
+				int dy = 0;
+				int xoffset = 0;
+				int yoffset = 0;
+				if(right) {
+					 dx = 1;
+					 yoffset= World.tile_size/2;
+					 xoffset = World.tile_size/2;
+				}
+				if(left) {
+					 dx = -1;
+					 yoffset= World.tile_size/2;
+					 xoffset = -World.tile_size/2;
+				}
+				if(down) {
+					dy = 1;
+					xoffset = World.tile_size/2;
+					yoffset = World.tile_size;
+				}
+				if(up) {
+					dy = -1;
+					xoffset = World.tile_size/2;
+					yoffset = -World.tile_size;
+				}
+				if(!up && !down && !left && !right) {
+					dy = 1;
+					xoffset = 16;
+					yoffset = 32;
+				}
+				BulletShoot bullet = new BulletShoot(this.getX() + xoffset,this.getY() + yoffset,6,6,null,dx,dy);
+				Game.shots.add(bullet);
+			}
+		}
+		if(mouseShoot) {
+			mouseShoot = false;
+			if(hasGun && ammo > 0) {
+				ammo--;
+				double angle = Math.atan2(my - (this.getY()+8 - Camera.y),mx+8 - (this.getX() - Camera.x));
+				
+				double dx = Math.cos(angle) ;
+				double dy = Math.sin(angle);
+				int xoffset = 0;
+				int yoffset = 0;
+				if(right) {
+					 yoffset= World.tile_size/2;
+					 xoffset = World.tile_size/2;
+				}
+				if(left) {
+					 yoffset= World.tile_size/2;
+					 xoffset = -World.tile_size/2;
+				}
+				if(down) {
+					xoffset = World.tile_size/2;
+					yoffset = World.tile_size;
+				}
+				if(up) {
+					xoffset = World.tile_size/2;
+					yoffset = 16;
+				}
+				if(!up && !down && !left && !right) {
+					xoffset = 16;
+					yoffset = 16;
+				}
+				
+				BulletShoot bullet = new BulletShoot(this.getX() + xoffset,this.getY() + yoffset,6,6,null,dx,dy);
+				Game.shots.add(bullet);
+			}
+		}
+		
+		if(life < 0) {
+			Game.gameState = "game_over";
+		}
+		
 		Camera.x = Camera.clamp(this.getX() - (Game.WIDTH/2),0,World.width*World.tile_size - Game.WIDTH);
 		Camera.y = Camera.clamp(this.getY() - (Game.WIDTH/2),0,World.height*World.tile_size - Game.HEIGHT);
 	}
@@ -88,20 +180,29 @@ public class Player extends Entity{
 		if(!this.gotDamage) {
 			if(down) {
 				g.drawImage(rightPlayer[0],this.getX() - Camera.x,this.getY()- Camera.y,World.tile_size,World.tile_size,null);
+				if(this.hasGun) {
+					g.drawImage(Entity.gun_front_back, this.getX() - Camera.x + 16, this.getY() - Camera.y + 8, World.tile_size, World.tile_size,null);
+				}
 			}else if(left) {
 				g.drawImage(leftPlayer[1],this.getX()- Camera.x,this.getY()- Camera.y,World.tile_size,World.tile_size,null);
 				if(this.hasGun) {
-					g.drawImage(Entity.gun_left, this.getX() - Camera.x, this.getY() - Camera.y, World.tile_size, World.tile_size,null);
+					g.drawImage(Entity.gun_left, this.getX() - Camera.x - 10, this.getY() - Camera.y + 10, World.tile_size, World.tile_size,null);
 				}
 			}else if(right){
-				g.drawImage(leftPlayer[0],this.getX()- Camera.x,this.getY()- Camera.y,World.tile_size,World.tile_size,null);
+				g.drawImage(leftPlayer[0],this.getX()- Camera.x ,this.getY()- Camera.y,World.tile_size,World.tile_size,null);
 				if(this.hasGun) {
-					g.drawImage(Entity.gun_right, this.getX() - Camera.x, this.getY() - Camera.y, World.tile_size, World.tile_size,null);
+					g.drawImage(Entity.gun_right, this.getX() - Camera.x + 10, this.getY() - Camera.y + 10, World.tile_size, World.tile_size,null);
 				}
 			}else if(up) {
 				g.drawImage(rightPlayer[1],this.getX()- Camera.x,this.getY()- Camera.y,World.tile_size,World.tile_size,null);
+				if(this.hasGun) {
+					g.drawImage(Entity.gun_front_back, this.getX() - Camera.x + 16, this.getY() - Camera.y + 8, World.tile_size, World.tile_size,null);
+				}
 			}else {
 				g.drawImage(rightPlayer[0],this.getX()- Camera.x,this.getY()- Camera.y,World.tile_size,World.tile_size,null);
+				if(this.hasGun) {
+					g.drawImage(Entity.gun_front_back, this.getX() - Camera.x + 16, this.getY() - Camera.y + 8, World.tile_size, World.tile_size,null);
+				}
 			}
 		}else {
 			g.drawImage(playerDamage,this.getX() - Camera.x,this.getY() - Camera.y,World.tile_size,World.tile_size,null);

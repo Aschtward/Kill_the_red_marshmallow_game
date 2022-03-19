@@ -3,11 +3,6 @@ package com.omg.entities;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.Random;
-
-import com.omg.graph.Spritesheet;
-import com.omg.graph.UI;
 import com.omg.main.Game;
 import com.omg.world.Camera;
 import com.omg.world.World;
@@ -18,14 +13,19 @@ public class Enemy extends Entity {
 	private BufferedImage[] ani;
 	private int direction = 0;
 	private int view_size = 200;
+	private int life = 3;
+	private boolean is_damaged = false;
+	private int damageCurrent, damagedFrames = 5;
+	private int anicurrent = 0, aniFrames = 120;
 	
 	public Enemy(int x, int y, int width, int height, BufferedImage sprite) {
 		super(x, y, width, height, null);
-		ani = new BufferedImage[4];
+		ani = new BufferedImage[5];
 		ani[0] = Game.spritesheet.getSprite((16*9), 0, 16, 16);//up
 		ani[1] = Game.spritesheet.getSprite((16*8), 0, 16, 16);//down
 		ani[2] = Game.spritesheet.getSprite(16, 16, 16, 16);//right
 		ani[3] = Game.spritesheet.getSprite((16*2), 16, 16, 16);//left
+		ani[4] = Game.spritesheet.getSprite(3*16, 16, 16, 16);//damage
 	}
 	
 	public void dumbChase() {
@@ -45,6 +45,7 @@ public class Enemy extends Entity {
 			this.direction = 0;
 		} 
 	}
+	
 	public boolean isCollidingPlayer() {
 		Rectangle enemy = new Rectangle(this.getX(),this.getY(),World.tile_size - 6,World.tile_size - 6);
 		Rectangle player = new Rectangle(Game.player.getX(), Game.player.getY(),World.tile_size,World.tile_size);
@@ -53,8 +54,7 @@ public class Enemy extends Entity {
 	
 	public boolean isColliding(int xnext,int ynext) {
 		Rectangle enemy = new Rectangle(xnext,ynext,World.tile_size - 6,World.tile_size - 6);
-		for(int i = 0; i < Game.enemies.size(); i++) {
-			Enemy e = Game.enemies.get(i);
+		for(Enemy e : Game.enemies) {
 			if(e == this)
 				continue;
 			Rectangle collidingEnemy = new Rectangle(e.getX(),e.getY(),World.tile_size - 6,World.tile_size - 6);
@@ -70,32 +70,82 @@ public class Enemy extends Entity {
 		return enemyView.intersects(player);
 	}
 	
+	public void enemyDeath() {
+		Game.entities.remove(this);
+		Game.enemies.remove(this);
+	}
+	
+	public void collidingBullet() {
+		for(BulletShoot e : Game.shots) {
+			if(Entity.notPlayerCollided(e,this)) {
+				life--;
+				is_damaged = true;
+				Game.shots.remove(e);
+				return;
+			}
+		}
+	}
+	
+	public void idleMoviment() {
+		if(anicurrent > 60 && World.isFree(this.getX(), this.getY()+speed) && !isColliding(this.getX(), this.getY()+speed)) {
+			this.setY(this.getY()+speed);
+			this.direction = 1;
+		}
+		if(anicurrent < 60 && World.isFree(this.getX(), this.getY()-speed) && !isColliding(this.getX(), this.getY()-speed)) {
+			this.setY(this.getY()-speed);
+			this.direction = 0;
+		}
+		if(anicurrent > 70 && World.isFree(this.getX()+speed, this.getY()) && !isColliding(this.getX()+speed, this.getY())) {
+			this.setX(this.getX()+speed);
+			this.direction = 2;
+		}
+		if(anicurrent < 20 && World.isFree(this.getX()-speed, this.getY()) && !isColliding(this.getX()-speed, this.getY())) {
+			this.setX(this.getX()-speed);
+			this.direction = 3;
+		}
+	}
+	
 	public void tick() {
 		if(!isCollidingPlayer()) {
 			if(isSeeing()) {
 				if(Game.rand.nextInt(100) < 70)
 					dumbChase();
+			}else {
+					idleMoviment();
 			}
 		}else {
 			if(Game.rand.nextInt(100) < 10) {
 				Game.player.life -= Game.rand.nextInt(5);
 				Game.player.gotDamage = true;
 					if(Game.player.life <= 0) {
-						Game.image = new BufferedImage(Game.WIDTH,Game.HEIGHT,BufferedImage.TYPE_INT_RGB);
-						Game.entities = new ArrayList<Entity>();
-						Game.enemies = new ArrayList<Enemy>();
-						Game.spritesheet = new Spritesheet("/text.png");
-						Game.player = new Player(0,0,0,0, Game.spritesheet.getSprite(32, 0, 16, 16));
-						Game.entities.add(Game.player);
-						Game.world = new World("/map.png");
-						Game.ui = new UI();
+						//World.worldRestart(Game.level_now);
 					}
 			}
 		}
+		collidingBullet();
+		if(this.life == 0)
+			enemyDeath();
+		if(is_damaged) {
+			this.damageCurrent++;
+			if(this.damageCurrent == this.damagedFrames) {
+				this.damageCurrent = 0;
+				this.is_damaged = false;
+			}
+		}
+		this.anicurrent++;
+		if(this.anicurrent == this.aniFrames) {
+			this.anicurrent = 0;
+		}
+		
+
 	}
 	
 	public void render(Graphics g) {
-		g.drawImage(ani[direction], this.getX() - Camera.x, this.getY() - Camera.y,World.tile_size,World.tile_size,null);
+		if(!is_damaged) {
+			g.drawImage(ani[direction], this.getX() - Camera.x, this.getY() - Camera.y,World.tile_size,World.tile_size,null);
+		}else {
+			g.drawImage(ani[4], this.getX() - Camera.x, this.getY() - Camera.y,World.tile_size,World.tile_size,null);
+		}
 	}
 
 }

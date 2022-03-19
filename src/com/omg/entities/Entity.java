@@ -20,6 +20,7 @@ public class Entity {
 	public static BufferedImage gun_left = Game.spritesheet.getSprite(4*16,16,16,16);
 	public static BufferedImage bullet = Game.spritesheet.getSprite(7*16,0,16,16);
 	public static BufferedImage enemy = Game.spritesheet.getSprite(8*16, 0, 16, 16);
+	public static BufferedImage gun_front_back = Game.spritesheet.getSprite(5*16, 16, 16, 16);
 
 	
 	public Entity(int x, int y, int width, int height, BufferedImage sprite) {
@@ -38,6 +39,12 @@ public class Entity {
 		Rectangle player = new Rectangle(Game.player.getX(),Game.player.getY(),World.tile_size,World.tile_size);
 		Rectangle ent = new Rectangle(this.getX(),this.getY()+8,10,10);
 		return player.intersects(ent);
+	}
+	
+	public static boolean notPlayerCollided(Entity a, Entity b) {
+		Rectangle ent_a = new Rectangle(a.getX(),a.getY(),a.getWidth(),a.getHeight());
+		Rectangle ent_b = new Rectangle(b.getX(),b.getY(),b.getWidth(),b.getHeight());
+		return ent_a.intersects(ent_b);
 	}
 	public void tick(){
 		
