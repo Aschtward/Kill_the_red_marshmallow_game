@@ -45,10 +45,11 @@ public class Game extends Canvas implements Runnable, KeyListener,MouseListener{
 	public static Random rand;
 	public static UI ui;
 	public String level_now = "/map.png";
-	public static String gameState = "normal";
+	public static String gameState = "menu";
 	private int level_number = 0;
 	private int level_max = 1;
 	public static World world;
+	public Menu menu;
 	private Thread thread;
 	private boolean isRunning = true;
 	public boolean restartGame = false;
@@ -74,6 +75,7 @@ public class Game extends Canvas implements Runnable, KeyListener,MouseListener{
 		world = new World("/map.png");
 		rand = new Random();
 		ui = new UI();
+		menu = new Menu();
 		
 	}
 	
@@ -126,8 +128,8 @@ public class Game extends Canvas implements Runnable, KeyListener,MouseListener{
 					World.worldRestart(level_now);
 				}	
 			}
-		}else if(gameState == "game_over") {
-			
+		}else if(gameState == "menu") {
+			menu.tick();
 		}
 	}
 	
@@ -146,6 +148,7 @@ public class Game extends Canvas implements Runnable, KeyListener,MouseListener{
 		g.drawImage(image,0,0,WIDTH*SCALE,HEIGHT*SCALE,null);
 		world.render(g);
 			if(gameState == "normal") {
+				
 				this.restartGame = false;
 				for(int i = 0; i < entities.size();i++) {
 					Entity e = entities.get(i);
@@ -157,7 +160,9 @@ public class Game extends Canvas implements Runnable, KeyListener,MouseListener{
 				ui.render(g);
 				g.setFont(new Font("arial",Font.BOLD,17));
 				g.drawString("Munição: " + player.ammo,10,20);
+				
 			}else if(gameState == "game_over") {
+				
 				Graphics2D g2 = (Graphics2D) g;
 				g2.setColor(new Color(0,0,0,100));
 				g2.fillRect(0, 0, WIDTH*SCALE, HEIGHT*SCALE);
@@ -166,16 +171,19 @@ public class Game extends Canvas implements Runnable, KeyListener,MouseListener{
 				g.drawString("GAME OVER", ((WIDTH*SCALE)/4), ((HEIGHT*SCALE)/2));
 				g2.setFont(new Font("arial", Font.BOLD,18));
 				g.drawString("Enter to try again", ((WIDTH*SCALE)/4) + 10, ((HEIGHT*SCALE)/2) + 20);
-			if(restartGame) {
-				this.restartGame = false;
-				Game.gameState = "normal";
-				World.worldRestart(level_now);
+				
+				if(restartGame) {
+					
+					this.restartGame = false;
+					Game.gameState = "normal";
+					World.worldRestart(level_now);				
 			}
+		}else if(gameState == "menu") {
+			menu.render(g);
 		}
 		
 		bs.show();
 	}
-	
 	public void run() {
 		
 		//Implementação game looping
@@ -206,12 +214,10 @@ public class Game extends Canvas implements Runnable, KeyListener,MouseListener{
 		
 		stop();
 }
-
 	@Override
 	public void keyTyped(KeyEvent e) {
 		
 	}
-
 	@Override
 	public void keyPressed(KeyEvent e) {
 		
@@ -229,9 +235,21 @@ public class Game extends Canvas implements Runnable, KeyListener,MouseListener{
 		}
 		if(e.getKeyCode() == KeyEvent.VK_ENTER) {
 			this.restartGame = true;
+			if(gameState == "menu") {
+				menu.enter = true;
+			}
+		}
+		if(Game.gameState == "menu") {
+			if(e.getKeyCode() == KeyEvent.VK_UP) {
+				menu.up = true;
+			}else if(e.getKeyCode() == KeyEvent.VK_DOWN) {
+				menu.down = true;
+			}
+		}
+		if(e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+			gameState = "menu";
 		}
 	}
-
 	@Override
 	public void keyReleased(KeyEvent e) {
 		
@@ -246,13 +264,11 @@ public class Game extends Canvas implements Runnable, KeyListener,MouseListener{
 			player.down = false;
 		}
 	}
-
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub
 		
 	}
-
 	@Override
 	public void mousePressed(MouseEvent e) {
 		player.mouseShoot = true;
@@ -261,19 +277,16 @@ public class Game extends Canvas implements Runnable, KeyListener,MouseListener{
 		// TODO Auto-generated method stub
 		
 	}
-
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		// TODO Auto-generated method stub
 		
 	}
-
 	@Override
 	public void mouseEntered(MouseEvent e) {
 		// TODO Auto-generated method stub
 		
 	}
-
 	@Override
 	public void mouseExited(MouseEvent e) {
 		// TODO Auto-generated method stub

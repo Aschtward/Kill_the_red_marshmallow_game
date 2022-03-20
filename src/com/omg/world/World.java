@@ -92,7 +92,6 @@ public class World {
 				tiles[x3+(y3*World.width)] instanceof Wall ||
 				tiles[x4+(y4*World.width)] instanceof Wall );
 	}
-	
 	public void render(Graphics g) {
 		int xstart = Camera.x / tile_size;
 		int ystart = Camera.y / tile_size;
