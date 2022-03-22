@@ -22,6 +22,9 @@ public class Menu {
 	public int maxOption = option.length-1;
 	public boolean up = false, down = false, enter;
 	private BufferedImage icon;
+	public static boolean pause = false;
+	public static boolean saveExist = false;
+	public static boolean saveGame = false;
 	
 	public Menu() {
 		icon = Game.spritesheet.getSprite(32, 0, 16, 16);
@@ -34,15 +37,23 @@ public class Menu {
 			switch(apl1[0]) 
 			{
 				case "level":
-					World.worldRestart("map"+apl[2]+".png");
+					World.worldRestart("/map"+apl1[1]+".png");
 					Game.gameState = "normal";
+					pause = false;
+					break;
+				case "vida":
+					Game.player.life = Integer.parseInt(apl1[1]);
+					break;
+				case "municao":
+					Game.player.ammo = Integer.parseInt(apl1[1]);
+					break;
 			
 			}
 		}
 	}
 	
 	public static String loadGame(int encode) {
-		String line = null;
+		String line = "";
 		File file = new File("save.txt");
 		if(file.exists()) {
 			try {
@@ -50,16 +61,16 @@ public class Menu {
 				BufferedReader br = new BufferedReader(new FileReader("save.txt"));
 				try {	
 					while((singleLine = br.readLine()) != null) {
-						String [] tr = singleLine.split(":");
-						char[] val = tr[1].toCharArray();
-						tr[1] = "";
+						String [] trans = singleLine.split(":");
+						char[] val = trans[1].toCharArray();
+						trans[1] = "";
 						for(int i = 0; i < val.length; i++) {
 							val[i] -= encode;
-							tr[1] += val[i];
+							trans[1] += val[i];
 						}
-						line += tr[0];
+						line += trans[0];
 						line +=":";
-						line += tr[1];
+						line += trans[1];
 						line += "/";
 					}
 				}catch(IOException e) {}
@@ -97,6 +108,12 @@ public class Menu {
 	}
 	
 	public void tick() {
+		File file = new File("save.txt");
+		if(file.exists()) {
+			saveExist = true;
+		}else {
+			saveExist = false;
+		}
 		if(up) {
 			up = false;
 			currentOption--;
@@ -112,8 +129,16 @@ public class Menu {
 		}if(enter) {
 			enter = false;
 			if(option[currentOption] == "New Game") {
+				File file1 = new File("save.txt");
+				file1.delete();
 				Game.gameState = "normal";
-				World.worldRestart("/map.png");
+				World.worldRestart("/map1.png");
+			}else if(option[currentOption] == "Load Game"){
+				file = new File("save.txt");
+				if(file.exists()) {
+					String saver = loadGame(10);
+					applySave(saver);
+				}
 			}else if(option[currentOption] == "Continue") {
 				Game.gameState = "normal";
 			}else if(option[currentOption] == "Quit") {

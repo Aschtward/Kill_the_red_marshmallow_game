@@ -46,13 +46,14 @@ public class Game extends Canvas implements Runnable, KeyListener,MouseListener{
 	public static UI ui;
 	public String level_now = "/map.png";
 	public static String gameState = "menu";
-	private int level_number = 0;
-	private int level_max = 1;
+	private int level_number = 1;
+	private int level_max = 2;
 	public static World world;
 	public Menu menu;
 	private Thread thread;
 	private boolean isRunning = true;
 	public boolean restartGame = false;
+	public boolean saveGame = false;
 
 	
 	public Game() {
@@ -72,7 +73,7 @@ public class Game extends Canvas implements Runnable, KeyListener,MouseListener{
 		spritesheet = new Spritesheet("/text.png");
 		player = new Player(0,0,0,0, spritesheet.getSprite(32, 0, 16, 16));
 		entities.add(player);
-		world = new World("/map.png");
+		world = new World("/map1.png");
 		rand = new Random();
 		ui = new UI();
 		menu = new Menu();
@@ -113,6 +114,12 @@ public class Game extends Canvas implements Runnable, KeyListener,MouseListener{
 	
 	public void tick() {
 		if(gameState == "normal") {
+			if(this.saveGame) {
+				this.saveGame = false;
+				String[] opt1 = {"level","vida","municao"};
+				int[] op2 = {level_number,(int)player.life,player.ammo};
+				Menu.saveGame(opt1, op2, 10);
+			}
 			for(int i = 0; i < entities.size();i++) {
 				Entity e = entities.get(i);
 				e.tick();
@@ -248,6 +255,10 @@ public class Game extends Canvas implements Runnable, KeyListener,MouseListener{
 		}
 		if(e.getKeyCode() == KeyEvent.VK_ESCAPE) {
 			gameState = "menu";
+		}
+		if(e.getKeyCode() == KeyEvent.VK_SPACE) {
+			if(gameState == "normal")
+				this.saveGame = true;
 		}
 	}
 	@Override
