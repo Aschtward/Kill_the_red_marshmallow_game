@@ -12,6 +12,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferInt;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -54,6 +55,8 @@ public class Game extends Canvas implements Runnable, KeyListener,MouseListener{
 	private boolean isRunning = true;
 	public boolean restartGame = false;
 	public boolean saveGame = false;
+	public static int[] pixels;
+
 
 	
 	public Game() {
@@ -64,9 +67,8 @@ public class Game extends Canvas implements Runnable, KeyListener,MouseListener{
 		///
 		addKeyListener(this);
 		addMouseListener(this);
-		
-		
-		image = new BufferedImage(WIDTH,HEIGHT,BufferedImage.TYPE_INT_RGB);
+		image = new BufferedImage(WIDTH,HEIGHT,BufferedImage.TYPE_INT_ARGB);
+		pixels = ((DataBufferInt)image.getRaster().getDataBuffer()).getData();
 		entities = new ArrayList<Entity>();
 		enemies = new ArrayList<Enemy>();
 		shots = new ArrayList<BulletShoot>();
@@ -104,20 +106,18 @@ public class Game extends Canvas implements Runnable, KeyListener,MouseListener{
 			e.printStackTrace();
 		}
 	}
-	
-	
+		
 	public static void main(String args[]) {
 		Game game = new Game();
 		game.start();
 	}
-	
-	
+		
 	public void tick() {
 		if(gameState == "normal") {
 			if(this.saveGame) {
 				this.saveGame = false;
-				String[] opt1 = {"level","vida","municao"};
-				int[] op2 = {level_number,(int)player.life,player.ammo};
+				String[] opt1 = {"level","vida","municao","playerx","playery","gun"};
+				int[] op2 = {level_number,(int)player.life,player.ammo,player.getX(),player.getY(),player.gotGun()};
 				Menu.saveGame(opt1, op2, 10);
 			}
 			for(int i = 0; i < entities.size();i++) {
@@ -140,6 +140,13 @@ public class Game extends Canvas implements Runnable, KeyListener,MouseListener{
 		}
 	}
 	
+	public void al() {
+		for(int i = 0; i < 40; i++) {
+			for(int j = 0; j < 40; j++) {
+				pixels[i + (j*WIDTH)] = 0x10ffffff;
+			}
+		}
+	}
 	public void  render() {
 		
 		BufferStrategy bs = this.getBufferStrategy();
@@ -148,14 +155,9 @@ public class Game extends Canvas implements Runnable, KeyListener,MouseListener{
 			return;
 		}
 		Graphics g = image.getGraphics();
-		///Implementação fundo  preto
-		g.setColor(Color.black);
-		g.fillRect(0,0,WIDTH,HEIGHT);
 		g = bs.getDrawGraphics();
-		g.drawImage(image,0,0,WIDTH*SCALE,HEIGHT*SCALE,null);
 		world.render(g);
 			if(gameState == "normal") {
-				
 				this.restartGame = false;
 				for(int i = 0; i < entities.size();i++) {
 					Entity e = entities.get(i);
@@ -167,8 +169,9 @@ public class Game extends Canvas implements Runnable, KeyListener,MouseListener{
 				ui.render(g);
 				g.setFont(new Font("arial",Font.BOLD,17));
 				g.drawString("Munição: " + player.ammo,10,20);
-				
-			}else if(gameState == "game_over") {
+				Graphics2D g3 = (Graphics2D) g;
+			}
+			if(gameState == "game_over") {
 				
 				Graphics2D g2 = (Graphics2D) g;
 				g2.setColor(new Color(0,0,0,100));
@@ -188,9 +191,9 @@ public class Game extends Canvas implements Runnable, KeyListener,MouseListener{
 		}else if(gameState == "menu") {
 			menu.render(g);
 		}
-		
 		bs.show();
 	}
+	
 	public void run() {
 		
 		//Implementação game looping
@@ -223,7 +226,6 @@ public class Game extends Canvas implements Runnable, KeyListener,MouseListener{
 }
 	@Override
 	public void keyTyped(KeyEvent e) {
-		
 	}
 	@Override
 	public void keyPressed(KeyEvent e) {
@@ -278,7 +280,6 @@ public class Game extends Canvas implements Runnable, KeyListener,MouseListener{
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub
-		
 	}
 	@Override
 	public void mousePressed(MouseEvent e) {

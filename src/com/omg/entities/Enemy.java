@@ -12,7 +12,7 @@ public class Enemy extends Entity {
 	private int speed = 1;
 	private BufferedImage[] ani;
 	private int direction = 0;
-	private int view_size = 200;
+	private int view_size = 100;
 	private int life = 3;
 	private boolean is_damaged = false;
 	private int damageCurrent, damagedFrames = 5;
@@ -65,9 +65,10 @@ public class Enemy extends Entity {
 	}
 	
 	public boolean isSeeing() {
-		Rectangle enemyView = new Rectangle(this.getX()-(int)(view_size/2),this.getY()-(int)(view_size/2),view_size,view_size);
-		Rectangle player = new Rectangle(Game.player.getX(), Game.player.getY(),World.tile_size,World.tile_size);
-		return enemyView.intersects(player);
+		if(this.distanceBetwen(this.getX(), this.getY(), Game.player.getX(), Game.player.getY()) < this.view_size) {
+			return true;
+		}
+		return false;
 	}
 	
 	public void enemyDeath() {

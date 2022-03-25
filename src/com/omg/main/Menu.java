@@ -1,6 +1,5 @@
 package com.omg.main;
 
-
 import com.omg.world.World;
 
 import java.awt.Color;
@@ -33,7 +32,7 @@ public class Menu {
 	public static void applySave(String str) {
 		String[] apl = str.split("/");
 		for(int i = 0; i < apl.length; i++) {
-			String[] apl1 = apl[i].split(":");
+			String[] apl1 = apl[i].split(",");
 			switch(apl1[0]) 
 			{
 				case "level":
@@ -47,7 +46,15 @@ public class Menu {
 				case "municao":
 					Game.player.ammo = Integer.parseInt(apl1[1]);
 					break;
-			
+				case "playerx":
+					Game.player.setX(Integer.parseInt(apl1[1]));
+					break;
+				case "playery":
+					Game.player.setY(Integer.parseInt(apl1[1]));
+					break;
+				case "gun":
+					Game.player.setHasGun(true);
+					break;
 			}
 		}
 	}
@@ -61,7 +68,7 @@ public class Menu {
 				BufferedReader br = new BufferedReader(new FileReader("save.txt"));
 				try {	
 					while((singleLine = br.readLine()) != null) {
-						String [] trans = singleLine.split(":");
+						String [] trans = singleLine.split(",");
 						char[] val = trans[1].toCharArray();
 						trans[1] = "";
 						for(int i = 0; i < val.length; i++) {
@@ -69,7 +76,7 @@ public class Menu {
 							trans[1] += val[i];
 						}
 						line += trans[0];
-						line +=":";
+						line +=",";
 						line += trans[1];
 						line += "/";
 					}
@@ -88,7 +95,7 @@ public class Menu {
 		}catch(IOException e) {}
 		for(int i = 0; i < val1.length; i++) {
 			String current = val1[i];
-			current += ":";
+			current += ",";
 			char[] value = Integer.toString(val2[i]).toCharArray();
 			for(int j = 0 ; j < value.length ; j++) {
 				value[j] += encode;
@@ -129,8 +136,8 @@ public class Menu {
 		}if(enter) {
 			enter = false;
 			if(option[currentOption] == "New Game") {
-				File file1 = new File("save.txt");
-				file1.delete();
+				file = new File("save.txt");
+				file.delete();
 				Game.gameState = "normal";
 				World.worldRestart("/map1.png");
 			}else if(option[currentOption] == "Load Game"){

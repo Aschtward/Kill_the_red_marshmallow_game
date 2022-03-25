@@ -45,15 +45,17 @@ public class Player extends Entity{
 		}
 	}
 	
-	public void gotGun() {
+	public int gotGun() {
 		for(int i = 0; i < Game.entities.size(); i++) {
 			if(Game.entities.get(i) instanceof Gun) {
 				if(Game.entities.get(i).collided()) {
-					this.hasGun = true;
+					this.setHasGun(true);
 					Game.entities.remove(i);
+					return 1;
 				}
 			}
 		}
+		return 0;
 	}
 	
 	public void gotHeal() {
@@ -96,7 +98,7 @@ public class Player extends Entity{
 		}
 		if(shooting) {
 			shooting = false;
-			if(hasGun && ammo > 0) {
+			if(isHasGun() && ammo > 0) {
 				ammo--;
 				int dx = 0;
 				int dy = 0;
@@ -133,7 +135,7 @@ public class Player extends Entity{
 		}
 		if(mouseShoot) {
 			mouseShoot = false;
-			if(hasGun && ammo > 0) {
+			if(isHasGun() && ammo > 0) {
 				ammo--;
 				double angle = Math.atan2(my - (this.getY()+8 - Camera.y),mx+8 - (this.getX() - Camera.x));
 				
@@ -180,33 +182,41 @@ public class Player extends Entity{
 		if(!this.gotDamage) {
 			if(down) {
 				g.drawImage(rightPlayer[0],this.getX() - Camera.x,this.getY()- Camera.y,World.tile_size,World.tile_size,null);
-				if(this.hasGun) {
+				if(this.isHasGun()) {
 					g.drawImage(Entity.gun_front_back, this.getX() - Camera.x + 16, this.getY() - Camera.y + 8, World.tile_size, World.tile_size,null);
 				}
 			}else if(left) {
 				g.drawImage(leftPlayer[1],this.getX()- Camera.x,this.getY()- Camera.y,World.tile_size,World.tile_size,null);
-				if(this.hasGun) {
+				if(this.isHasGun()) {
 					g.drawImage(Entity.gun_left, this.getX() - Camera.x - 10, this.getY() - Camera.y + 10, World.tile_size, World.tile_size,null);
 				}
 			}else if(right){
 				g.drawImage(leftPlayer[0],this.getX()- Camera.x ,this.getY()- Camera.y,World.tile_size,World.tile_size,null);
-				if(this.hasGun) {
+				if(this.isHasGun()) {
 					g.drawImage(Entity.gun_right, this.getX() - Camera.x + 10, this.getY() - Camera.y + 10, World.tile_size, World.tile_size,null);
 				}
 			}else if(up) {
 				g.drawImage(rightPlayer[1],this.getX()- Camera.x,this.getY()- Camera.y,World.tile_size,World.tile_size,null);
-				if(this.hasGun) {
+				if(this.isHasGun()) {
 					g.drawImage(Entity.gun_front_back, this.getX() - Camera.x + 16, this.getY() - Camera.y + 8, World.tile_size, World.tile_size,null);
 				}
 			}else {
 				g.drawImage(rightPlayer[0],this.getX()- Camera.x,this.getY()- Camera.y,World.tile_size,World.tile_size,null);
-				if(this.hasGun) {
+				if(this.isHasGun()) {
 					g.drawImage(Entity.gun_front_back, this.getX() - Camera.x + 16, this.getY() - Camera.y + 8, World.tile_size, World.tile_size,null);
 				}
 			}
 		}else {
 			g.drawImage(playerDamage,this.getX() - Camera.x,this.getY() - Camera.y,World.tile_size,World.tile_size,null);
 		}
+	}
+
+	public boolean isHasGun() {
+		return hasGun;
+	}
+
+	public void setHasGun(boolean hasGun) {
+		this.hasGun = hasGun;
 	}
 
 }

@@ -4,9 +4,8 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
-
+import java.awt.image.DataBufferInt;
 import javax.imageio.ImageIO;
-
 import com.omg.entities.*;
 import com.omg.graph.Spritesheet;
 import com.omg.graph.UI;
@@ -19,7 +18,6 @@ public class World {
 	public static final int tile_size = 32;
 
 	public World(String path) {
-		
 		try {
 			BufferedImage mapa = ImageIO.read(getClass().getResource(path));
 			int[] px = new int[mapa.getWidth() * mapa.getHeight()];
