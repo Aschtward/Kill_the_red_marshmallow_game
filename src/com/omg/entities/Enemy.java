@@ -3,8 +3,13 @@ package com.omg.entities;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.util.List;
+
 import com.omg.main.Game;
+import com.omg.world.AStar;
 import com.omg.world.Camera;
+import com.omg.world.Node;
+import com.omg.world.Vector2i;
 import com.omg.world.World;
 
 public class Enemy extends Entity {
@@ -12,7 +17,7 @@ public class Enemy extends Entity {
 	private int speed = 1;
 	private BufferedImage[] ani;
 	private int direction = 0;
-	private int view_size = 100;
+	private int view_size = 200;
 	private int life = 3;
 	private boolean is_damaged = false;
 	private int damageCurrent, damagedFrames = 5;
@@ -36,7 +41,6 @@ public class Enemy extends Entity {
 			this.setX(this.getX()-speed);
 			this.direction = 3;
 		}
-		
 		if(Game.player.getY() > this.getY() && World.isFree(this.getX(), this.getY()+speed) && !isColliding(this.getX(), this.getY()+speed)) {
 			this.setY(this.getY()+speed);
 			this.direction = 1;
@@ -99,6 +103,7 @@ public class Enemy extends Entity {
 		if(anicurrent > 70 && World.isFree(this.getX()+speed, this.getY()) && !isColliding(this.getX()+speed, this.getY())) {
 			this.setX(this.getX()+speed);
 			this.direction = 2;
+			
 		}
 		if(anicurrent < 20 && World.isFree(this.getX()-speed, this.getY()) && !isColliding(this.getX()-speed, this.getY())) {
 			this.setX(this.getX()-speed);
@@ -106,11 +111,41 @@ public class Enemy extends Entity {
 		}
 	}
 	
+	public  void followPath(List<Node> path) {
+		if(path != null) {
+			if(path.size() > 0) {
+				Vector2i target = path.get(path.size()-1).tile;
+				if(this.getX() <  target.x*World.tile_size) {
+					this.setX(this.getX()+speed);
+					this.direction = 2;
+				}else if(this.getX() > target.x*World.tile_size) {
+					this.setX(this.getX()-speed);
+					this.direction = 3;
+					this.direction = 1;
+				}
+				if(this.getY() < target.y*World.tile_size) {
+					this.setY(this.getY()+speed);
+				}else if(this.getY() > target.y*World.tile_size) {
+					this.setY(this.getY()-speed);
+					this.direction = 0;
+				}
+				if(this.getX() == target.x*World.tile_size && this.getY() == target.y*World.tile_size) {
+					path.remove(path.size()-1);
+				}
+			}
+		}
+	}
+	
 	public void tick() {
 		if(!isCollidingPlayer()) {
 			if(isSeeing()) {
-				if(Game.rand.nextInt(100) < 70)
-					dumbChase();
+				if(path == null || path.size() == 0) {
+					Vector2i start = new Vector2i((int)(this.getX()/World.tile_size),(int)(this.getY()/World.tile_size));
+					Vector2i end = new Vector2i((int)(Game.player.getX()/World.tile_size),(int)(Game.player.getY()/World.tile_size));
+					path =  AStar.findPath(Game.world, start, end);
+				}
+				if(Game.rand.nextInt(100) < 90)
+					followPath(path);
 			}else {
 					idleMoviment();
 			}
@@ -118,9 +153,6 @@ public class Enemy extends Entity {
 			if(Game.rand.nextInt(100) < 10) {
 				Game.player.life -= Game.rand.nextInt(5);
 				Game.player.gotDamage = true;
-					if(Game.player.life <= 0) {
-						//World.worldRestart(Game.level_now);
-					}
 			}
 		}
 		collidingBullet();

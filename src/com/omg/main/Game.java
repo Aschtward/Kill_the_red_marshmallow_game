@@ -140,13 +140,6 @@ public class Game extends Canvas implements Runnable, KeyListener,MouseListener{
 		}
 	}
 	
-	public void al() {
-		for(int i = 0; i < 40; i++) {
-			for(int j = 0; j < 40; j++) {
-				pixels[i + (j*WIDTH)] = 0x10ffffff;
-			}
-		}
-	}
 	public void  render() {
 		
 		BufferStrategy bs = this.getBufferStrategy();
@@ -169,7 +162,6 @@ public class Game extends Canvas implements Runnable, KeyListener,MouseListener{
 				ui.render(g);
 				g.setFont(new Font("arial",Font.BOLD,17));
 				g.drawString("Munição: " + player.ammo,10,20);
-				Graphics2D g3 = (Graphics2D) g;
 			}
 			if(gameState == "game_over") {
 				

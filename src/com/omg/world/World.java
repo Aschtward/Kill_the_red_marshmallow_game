@@ -4,7 +4,6 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.awt.image.DataBufferInt;
 import javax.imageio.ImageIO;
 import com.omg.entities.*;
 import com.omg.graph.Spritesheet;
@@ -13,9 +12,9 @@ import com.omg.main.Game;
 
 public class World {
 	
-	private static Tile[] tiles;
+	public static Tile[] tiles;
 	public static int width, height;
-	public static final int tile_size = 32;
+	public static int tile_size = 32;
 
 	public World(String path) {
 		try {

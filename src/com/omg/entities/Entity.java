@@ -3,9 +3,12 @@ package com.omg.entities;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.util.List;
 
 import com.omg.main.Game;
 import com.omg.world.Camera;
+import com.omg.world.Node;
+import com.omg.world.Vector2i;
 import com.omg.world.World;
 
 public class Entity {
@@ -14,7 +17,8 @@ public class Entity {
 	private int y;
 	private int width;
 	private int height;
-	private BufferedImage sprite;	
+	private BufferedImage sprite;
+	protected List<Node> path;
 	public static BufferedImage heal = Game.spritesheet.getSprite(5*16,0,16,16);
 	public static BufferedImage gun_right = Game.spritesheet.getSprite(6*16,0,16,16);
 	public static BufferedImage gun_left = Game.spritesheet.getSprite(4*16,16,16,16);
