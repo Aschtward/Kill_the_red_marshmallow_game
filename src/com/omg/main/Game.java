@@ -23,6 +23,7 @@ import com.omg.entities.Player;
 import com.omg.entities.BulletShoot;
 import com.omg.graph.Spritesheet;
 import com.omg.graph.UI;
+import com.omg.world.Light;
 import com.omg.world.World;
 
 public class Game extends Canvas implements Runnable, KeyListener,MouseListener{
@@ -56,6 +57,7 @@ public class Game extends Canvas implements Runnable, KeyListener,MouseListener{
 	public boolean restartGame = false;
 	public boolean saveGame = false;
 	public static int[] pixels;
+	public Light l;
 
 
 	
@@ -79,6 +81,7 @@ public class Game extends Canvas implements Runnable, KeyListener,MouseListener{
 		rand = new Random();
 		ui = new UI();
 		menu = new Menu();
+		l = new Light(100,100,100);
 		
 	}
 	
@@ -159,6 +162,7 @@ public class Game extends Canvas implements Runnable, KeyListener,MouseListener{
 				for(int i = 0; i<  shots.size() ;i++) {
 					shots.get(i).render(g);
 				}
+				l.render((Graphics2D) g);
 				ui.render(g);
 				g.setFont(new Font("arial",Font.BOLD,17));
 				g.drawString("Munição: " + player.ammo,10,20);
@@ -183,6 +187,7 @@ public class Game extends Canvas implements Runnable, KeyListener,MouseListener{
 		}else if(gameState == "menu") {
 			menu.render(g);
 		}
+		
 		bs.show();
 	}
 	

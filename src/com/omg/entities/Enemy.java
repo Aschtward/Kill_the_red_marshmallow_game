@@ -57,7 +57,7 @@ public class Enemy extends Entity {
 	}
 	
 	public boolean isColliding(int xnext,int ynext) {
-		Rectangle enemy = new Rectangle(xnext,ynext,World.tile_size - 6,World.tile_size - 6);
+		Rectangle enemy = new Rectangle(xnext,ynext,World.tile_size - 10,World.tile_size - 10);
 		for(Enemy e : Game.enemies) {
 			if(e == this)
 				continue;
@@ -115,17 +115,17 @@ public class Enemy extends Entity {
 		if(path != null) {
 			if(path.size() > 0) {
 				Vector2i target = path.get(path.size()-1).tile;
-				if(this.getX() <  target.x*World.tile_size) {
+				if(this.getX() <  target.x*World.tile_size && !isColliding(this.getX()+speed,this.getY())) {
 					this.setX(this.getX()+speed);
 					this.direction = 2;
-				}else if(this.getX() > target.x*World.tile_size) {
+				}else if(this.getX() > target.x*World.tile_size && !isColliding(this.getX()-speed,this.getY())) {
 					this.setX(this.getX()-speed);
 					this.direction = 3;
 					this.direction = 1;
 				}
-				if(this.getY() < target.y*World.tile_size) {
+				if(this.getY() < target.y*World.tile_size && !isColliding(this.getX(),this.getY()+speed)) {
 					this.setY(this.getY()+speed);
-				}else if(this.getY() > target.y*World.tile_size) {
+				}else if(this.getY() > target.y*World.tile_size && !isColliding(this.getX(),this.getY()-speed)) {
 					this.setY(this.getY()-speed);
 					this.direction = 0;
 				}
